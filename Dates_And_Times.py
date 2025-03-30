@@ -15,6 +15,7 @@ class Dates_Times():
 
     days = {}
 
+
     def _day_to_num(self, day):
         days = {
             "Monday": 0,
@@ -28,6 +29,20 @@ class Dates_Times():
 
         return days[day]
     
+    # 1st, 2nd ...
+    def _add_suffix(self, num):
+
+        if 11 <= num % 100 <= 13:
+            suffix = 'th'
+        else:
+            suffix = {
+                1: 'st', 
+                2: 'nd', 
+                3: 'rd'
+                }.get(num % 10, 'th')
+            
+        return suffix
+
     def _num_to_days(self, num):
         days = {
             0: "Monday",
@@ -58,20 +73,27 @@ class Dates_Times():
 
         return months[num]
 
+
+    # recursive func to go from start to end by delta
+    # note delta might change to be in config.json
     def _fill_time_dict(self, start, end, time_array=None, delta=timedelta(minutes=30)):
 
+        # basecase 
         if time_array is None:
             time_array = []
         
+        # basecase 
         if start >= end:
             return time_array
         
         new_start = start + delta
 
+        # add on
         time_array.append((start, new_start))
 
         return self._fill_time_dict(start = new_start, end = end, time_array = time_array, delta = delta)
 
+    # setup
     def __init__(self):
 
         config_path = os.path.join(self.DATA_FOLDER,"config.json")
@@ -82,6 +104,8 @@ class Dates_Times():
         self.days = self.config_dict["days"]
         self.max_future = self.config_dict["maxFuture"]
 
+
+    # get all avalible times based on a month/year
     def get_available(self, month = datetime.now().month, year = datetime.now().year):
         
         now = datetime.now()
@@ -131,6 +155,7 @@ class Dates_Times():
                 available.append(temp_dict)
         return available
 
+    # get the dates and lables for buttons for main.html
     def get_available_lables(self,month = datetime.now().month, year = datetime.now().year):
         labels = []
 
@@ -139,7 +164,6 @@ class Dates_Times():
         for i in available:
             for start_time, end_time in i["availableTimes"]:
 
-                labels.append(f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}")
+                labels.append(f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}{self._add_suffix(i["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}")
 
         return (available,labels)
-

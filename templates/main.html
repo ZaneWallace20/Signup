@@ -6,27 +6,25 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-           
+            var year = $('body').data('year'); 
+
             $('button').click(function() {
-               
                 var text = $(this).val();
 
-                
-                $.post('/submit', {data: text}, function(data) {
+                $.post('/submit', {data: text, year: year}, function(data) {
                     alert(data.message);
                 });
             });
         });
     </script>
 </head>
-<body>
+<body data-year="{{ year }}">
     <title>BAR {{ month }} {{ year }}</title>
 
-    <h1>Here are the times avalible for:</h1>
+    <h1>Here are the times available for:</h1>
     <h1>{{ month }} {{ year }}</h1>
 
     <div>
-      
         {% for button in buttons %}
             <button value="{{ button }}">{{ button }}</button><br><br>
         {% endfor %}

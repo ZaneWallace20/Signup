@@ -29,7 +29,7 @@ def days_times():
 def button_click():
     value = request.form.get('data')
 
-    print(value)
+    print(request.form.get('year'))
 
     return jsonify({"message": f"'{value}' clicked :D"})
 
