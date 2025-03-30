@@ -1,0 +1,16 @@
+{
+    "maxFuture" : 2,
+    "days":[
+         {
+            "day":"Saturday",
+            "startTime":"9:00 AM",
+            "endTime":"12:00 PM"
+        },
+        {
+            "day":"Monday",
+            "startTime":"11:00 AM",
+            "endTime":"1:00 PM"
+        }
+    ]
+
+}
