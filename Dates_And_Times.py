@@ -4,7 +4,6 @@ import json
 import os
 from dateutil.relativedelta import relativedelta
 
-
 class Dates_Times():
 
     # in months
@@ -26,10 +25,41 @@ class Dates_Times():
             "Saturday": 5,
             "Sunday": 6
         }
-        
+
         return days[day]
+    
+    def _num_to_days(self, num):
+        days = {
+            0: "Monday",
+            1: "Tuesday",
+            2: "Wednesday",
+            3: "Thursday",
+            4: "Friday",
+            5: "Saturday",
+            6: "Sunday"
+        }
+        return days[num]
+
+    def _num_to_months(self, num):
+        months = {
+            1: "January", 
+            2: "February", 
+            3: "March", 
+            4: "April",
+            5: "May", 
+            6: "June", 
+            7: "July", 
+            8: "August",
+            9: "September", 
+            10: "October", 
+            11: "November", 
+            12: "December"
+        }
+
+        return months[num]
 
     def _fill_time_dict(self, start, end, time_array=None, delta=timedelta(minutes=30)):
+
         if time_array is None:
             time_array = []
         
@@ -61,7 +91,10 @@ class Dates_Times():
         future_date = datetime(year, month, 1)
         
         if current_date + relativedelta(months=self.max_future) < future_date:
-            return {}
+            return []
+
+        if current_date > future_date:
+            return []
 
         full_month = calendar.monthcalendar(year, month)
 
@@ -98,20 +131,15 @@ class Dates_Times():
                 available.append(temp_dict)
         return available
 
-                
-x = Dates_Times()
-for i in x.get_available():
-    print(i["weekday"],i["month"],i["day"],i["year"])
-    for start_time, end_time in i["availableTimes"]:
-        print(f"{" "*10}{start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}")
+    def get_available_lables(self,month = datetime.now().month, year = datetime.now().year):
+        labels = []
 
+        available = self.get_available(month, year)
 
+        for i in available:
+            for start_time, end_time in i["availableTimes"]:
 
-            
+                labels.append(f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}")
 
-
-
-
-
-        
+        return (available,labels)
 

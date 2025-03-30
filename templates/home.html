@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BAR Sign Up</title>
+</head>
+<body>
+
+<h1>Welcome to the Build and Rebild sign up page!</h1>
+<p>Please feel free to ask if you have any questions :D</p>
+<h1>Enter Day and Year or keep empty for latest date</h1>
+
+    <form onsubmit="return checkDate()">
+        <label for="month">Month:</label>
+        <input type="number" id="month" name="month">
+        <br>
+        <label for="year">Year: </label>
+        <input type="number" id="year" name="year">
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+</body>
+</html>
+
+<script>
+    function checkDate() {
+
+        var month = document.getElementById("month").value;
+        var year = document.getElementById("year").value;
+        console.log(month)
+        if ((month == "") || (year=="")){
+
+            var newURL = window.location.origin + "/signup?month=" + month + "&year=" + year;
+            window.location.href = newURL
+            return false
+        }
+
+
+        if (month < 1 || month > 12 || year < 2024 || year > 9999) {
+            alert("Please enter a valid month (1-12) and a valid year (2025-9999).");
+            return false;
+        }
+
+        var newURL = window.location.origin + "/signup?month=" + month + "&year=" + year;
+        window.location.href = newURL
+
+        return false;
+    }
+</script>

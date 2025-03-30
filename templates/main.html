@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+           
+            $('button').click(function() {
+               
+                var text = $(this).val();
+
+                
+                $.post('/submit', {data: text}, function(data) {
+                    alert(data.message);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <title>BAR {{ month }} {{ year }}</title>
+
+    <h1>Here are the times avalible for:</h1>
+    <h1>{{ month }} {{ year }}</h1>
+
+    <div>
+      
+        {% for button in buttons %}
+            <button value="{{ button }}">{{ button }}</button><br><br>
+        {% endfor %}
+    </div>
+</body>
+</html>
