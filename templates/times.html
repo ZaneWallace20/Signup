@@ -7,18 +7,22 @@
     <script>
         $(document).ready(function() {
             var year = $('body').data('year'); 
+            var month = $('body').data('month'); 
 
             $('button').click(function() {
-                var text = $(this).val();
+                var day = $(this).data('day');
+                var number = $(this).data('number');
 
-                $.post('/submit', {data: text, year: year}, function(data) {
+                console.log(month)
+                $.post('/submit', {month: month, day:day, year: year, number:number}, function(data) {
                     alert(data.message);
+                    window.location.href = window.location.origin;
                 });
             });
         });
     </script>
 </head>
-<body data-year="{{ year }}">
+<body data-year="{{ year }}" data-month="{{ month }}">
     <title>BAR {{ month }} {{ year }}</title>
 
     <h1>Here are the times available for:</h1>
@@ -26,7 +30,7 @@
 
     <div>
         {% for button in buttons %}
-            <button value="{{ button }}">{{ button }}</button><br><br>
+            <button data-number="{{ button.number }}" data-day="{{ button.day }}">{{ button.title }}</button><br><br>
         {% endfor %}
     </div>
 </body>

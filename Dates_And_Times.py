@@ -106,8 +106,7 @@ class Dates_Times():
 
 
     # get all avalible times based on a month/year
-    def get_available(self, month = datetime.now().month, year = datetime.now().year):
-        
+    def get_available(self, month = datetime.now().month, requested_day = None, year = datetime.now().year):
         now = datetime.now()
 
         current_date = datetime(now.year, now.month, 1)
@@ -133,7 +132,10 @@ class Dates_Times():
                     continue
                 if day == 0:
                     continue
-                
+                if requested_day:
+                    if day != requested_day:
+                        continue
+
                 day_of_week = self.days[nums_of_week.index(day_num)]
                 
                 start = day_of_week["startTime"]
@@ -148,22 +150,60 @@ class Dates_Times():
                     "availableTimes":  [] 
                 }
 
+                start_time = datetime.strptime(start, "%I:%M %p").replace(year=year, month=month)
+                end_time = datetime.strptime(end, "%I:%M %p").replace(year=year, month=month)
+
                 temp_dict["availableTimes"] = self._fill_time_dict(
-                    datetime.strptime(start, "%I:%M %p"),  
-                    datetime.strptime(end, "%I:%M %p"))
+                    start_time,  
+                    end_time
+                )
 
                 available.append(temp_dict)
+    
         return available
 
     # get the dates and lables for buttons for main.html
-    def get_available_lables(self,month = datetime.now().month, year = datetime.now().year):
+    def get_available_labels(self,month = datetime.now().month, day = datetime.now().day, year = datetime.now().year):
         labels = []
 
-        available = self.get_available(month, year)
+        available = self.get_available(month=month, requested_day=day, year=year)[0]
+
+        array_num = 0
+
+        print(available["availableTimes"])
+
+        for start_time, end_time in available["availableTimes"]:
+            
+
+            temp_dict = {
+                "title": f"{available["weekday"]}, {self._num_to_months(available["month"])}, {available["day"]}{self._add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
+                "number": array_num,
+                "day": available["day"]
+            }
+
+            labels.append(temp_dict)
+
+            array_num += 1
+
+        return labels
+    
+    # get the dates and lables for buttons for main.html
+    def get_available_labels_days(self,month = datetime.now().month, year = datetime.now().year):
+        labels = []
+
+        print(month, year)
+
+        available = self.get_available(month=month, year=year)
 
         for i in available:
-            for start_time, end_time in i["availableTimes"]:
+            temp_dict = {
 
-                labels.append(f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}{self._add_suffix(i["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}")
+                "title":  f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}{self._add_suffix(i["day"])}",
+                "day": i["day"]
+            }
+            labels.append(temp_dict)
 
-        return (available,labels)
+        return labels
+    
+    def reserve_time(self, date):
+        return True

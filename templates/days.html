@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var year = $('body').data('year'); 
+            var month = $('body').data('month');
+
+            $('button').click(function() {
+                var text = $(this).val();
+                var day = $(this).data('day')
+                
+               
+                    
+                    var newURL = window.location.origin + "/signupDay?month=" + month + "&day=" + day + "&year=" + year;
+                    window.location.href = newURL
+                    
+                
+            });
+        });
+    </script>
+</head>
+<body data-year="{{ year }}" data-month="{{ month }}">
+    <title>BAR {{ month }} {{ year }}</title>
+
+    <h1>Here are the days available for:</h1>
+    <h1>{{ month }} {{ year }}</h1>
+
+    <div>
+        {% for button in buttons %}
+            <button data-day="{{ button.day }}">{{ button.title }}</button><br><br>
+        {% endfor %}
+    </div>
+</body>
+</html>
