@@ -26,7 +26,7 @@ def dates():
 
     print(data)
 
-    return render_template('days.html', buttons=data,month = str(month), year = str(year))
+    return render_template('days.html', buttons=data,month = str(month), month_string = times.num_to_months(month), year = str(year))
 
 @app.route('/signupDay')
 def days_times():
@@ -46,7 +46,7 @@ def days_times():
 
     print(data)
 
-    return render_template('times.html', buttons=data, month = str(month), year = str(year))
+    return render_template('times.html', buttons=data, month = str(month), month_string = times.num_to_months(month), day = str(day) + times.add_suffix(day), year = str(year))
 
 
 @app.route('/submit', methods=['POST'])

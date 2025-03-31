@@ -25,10 +25,10 @@
     </script>
 </head>
 <body data-year="{{ year }}" data-month="{{ month }}">
-    <title>BAR {{ month }} {{ year }}</title>
+    <title>BAR {{ month_string }} {{ year }}</title>
 
     <h1>Here are the days available for:</h1>
-    <h1>{{ month }} {{ year }}</h1>
+    <h1>{{ month_string }} {{ year }}</h1>
 
     <div>
         {% for button in buttons %}

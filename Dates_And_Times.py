@@ -30,7 +30,7 @@ class Dates_Times():
         return days[day]
     
     # 1st, 2nd ...
-    def _add_suffix(self, num):
+    def add_suffix(self, num):
 
         if 11 <= num % 100 <= 13:
             suffix = 'th'
@@ -43,7 +43,7 @@ class Dates_Times():
             
         return suffix
 
-    def _num_to_days(self, num):
+    def num_to_days(self, num):
         days = {
             0: "Monday",
             1: "Tuesday",
@@ -55,7 +55,7 @@ class Dates_Times():
         }
         return days[num]
 
-    def _num_to_months(self, num):
+    def num_to_months(self, num):
         months = {
             1: "January", 
             2: "February", 
@@ -176,7 +176,7 @@ class Dates_Times():
             
 
             temp_dict = {
-                "title": f"{available["weekday"]}, {self._num_to_months(available["month"])}, {available["day"]}{self._add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
+                "title": f"{available["weekday"]}, {self.num_to_months(available["month"])}, {available["day"]}{self.add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
                 "number": array_num,
                 "day": available["day"]
             }
@@ -198,7 +198,7 @@ class Dates_Times():
         for i in available:
             temp_dict = {
 
-                "title":  f"{i["weekday"]}, {self._num_to_months(i["month"])}, {i["day"]}{self._add_suffix(i["day"])}",
+                "title":  f"{i["weekday"]}, {self.num_to_months(i["month"])}, {i["day"]}{self.add_suffix(i["day"])}",
                 "day": i["day"]
             }
             labels.append(temp_dict)
