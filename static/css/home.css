@@ -1,0 +1,21 @@
+body {
+    background-color: #e7e7eb;
+  }
+  
+  button {
+    background-color: #295aec; 
+    color: lightgray; 
+    padding: 12px 20px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    border-radius: 5px;
+  
+  }
+  
+  button:hover {
+    background-color: rgb(0, 58, 120);
+  }
+
+  h2, h1, label{
+    color: #295aec;
+  }

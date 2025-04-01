@@ -25,20 +25,20 @@ body {font-family: Verdana, sans-serif;}
 .weekdays {
   margin: 0;
   padding: 10px 0;
-  background-color:#ddd;
+  background-color:#e7e7eb;
 }
 
 .weekdays li {
   display: inline-block;
   width: 13.6%;
-  color: #666;
+  color: black;
   text-align: center;
 }
 
 /* Days (1-31) */
 .days {
   padding: 10px 0;
-  background: #eee;
+  background: white;
   margin: 0;
 }
 
@@ -50,4 +50,22 @@ body {font-family: Verdana, sans-serif;}
   margin-bottom: 5px;
   font-size:12px;
   color: #777;
+}
+
+body {
+  background-color: #e7e7eb;
+}
+
+button {
+  background-color: #295aec; 
+  color: lightgray; 
+  padding: 12px 20px; 
+  font-size: 16px; 
+  font-weight: bold; 
+  border-radius: 5px;
+
+}
+
+button:hover {
+  background-color: rgb(0, 58, 120);
 }
