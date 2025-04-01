@@ -7,6 +7,7 @@ body {font-family: Verdana, sans-serif;}
   width: 100%;
   background: #295aec;
   text-align: center;
+
 }
 /* Month list */
 .month ul {
@@ -19,6 +20,8 @@ body {font-family: Verdana, sans-serif;}
   font-size: 20px;
   text-transform: uppercase;
   letter-spacing: 3px;
+
+
 }
 
 /* Weekdays (Mon-Sun) */
@@ -26,6 +29,9 @@ body {font-family: Verdana, sans-serif;}
   margin: 0;
   padding: 10px 0;
   background-color:#e7e7eb;
+  white-space: nowrap;
+
+
 }
 
 .weekdays li {
@@ -33,6 +39,9 @@ body {font-family: Verdana, sans-serif;}
   width: 13.6%;
   color: black;
   text-align: center;
+  white-space: nowrap;
+  padding: 0;
+  min-width: 95px;
 }
 
 /* Days (1-31) */
@@ -40,6 +49,9 @@ body {font-family: Verdana, sans-serif;}
   padding: 10px 0;
   background: white;
   margin: 0;
+  min-width: 710px;
+
+
 }
 
 .days li {
@@ -48,7 +60,7 @@ body {font-family: Verdana, sans-serif;}
   width: 13.6%;
   text-align: center;
   margin-bottom: 5px;
-  font-size:12px;
+  font-size:75%;
   color: #777;
 }
 
@@ -59,8 +71,8 @@ body {
 button {
   background-color: #295aec; 
   color: lightgray; 
-  padding: 12px 20px; 
-  font-size: 16px; 
+  padding: 10% 20%; 
+  font-size: 80%; 
   font-weight: bold; 
   border-radius: 5px;
 

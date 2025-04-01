@@ -94,7 +94,7 @@ class Dates_Times():
             time_array = []
         
         # basecase 
-        if start >= end:
+        if start + delta >= end:
             return time_array
         
         new_start = start + delta
