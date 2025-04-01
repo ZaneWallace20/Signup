@@ -41,7 +41,7 @@ body {font-family: Verdana, sans-serif;}
   text-align: center;
   white-space: nowrap;
   padding: 0;
-  min-width: 95px;
+  min-width: 96px;
 }
 
 /* Days (1-31) */
@@ -71,8 +71,8 @@ body {
 button {
   background-color: #295aec; 
   color: lightgray; 
-  padding: 10% 20%; 
-  font-size: 80%; 
+  padding: 5% 10%; 
+  font-size:85%;
   font-weight: bold; 
   border-radius: 5px;
 

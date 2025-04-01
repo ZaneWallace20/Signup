@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>BAR Sign Up</title>
+    <title>BAR Sign Up</title>
 </head>
+
 <body>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 
-<h1>Welcome to the Build and Rebild sign up page!</h1>
-<h2>Please feel free to ask if you have any questions :D</h2>
-<h1>Enter Month and Year or keep empty for latest date</h1>
 
-    <form onsubmit="return checkDate()">
-        <label for="month">Month:</label>
-        <input type="number" id="month" name="month">
-        <br>
-        <label for="year">Year: </label>
-        <input type="number" id="year" name="year">
-        <br><br>
-        <button type="submit">Search</button>
-    </form>
 
+    <h1>Welcome to the Build and Rebild sign up page!</h1>
+    <h2>Please feel free to ask if you have any questions :D</h2>
+    <h1>Enter Month and Year or keep empty for latest date</h1>
+    <div class="row">
+
+        <form onsubmit="return checkDate()">
+            <label for="month">Month:</label>
+            <input type="number" id="month" name="month">
+
+            <label for="year">Year: </label>
+            <input type="number" id="year" name="year">
+            <br>
+            <br>
+            <button type="submit">Search</button>
+        </form>
+
+        <img src="https://images.squarespace-cdn.com/content/v1/67ab05f3abf6272637d1e6d3/669d97be-99be-4376-872c-8490c26658a1/Build_Rebuild_Logo_White.png?format=200w"
+            alt="Logo!" img />
+    </div>
 </body>
-
-</html>
-
 <script>
     function checkDate() {
 
         var month = document.getElementById("month").value;
         var year = document.getElementById("year").value;
         console.log(month)
-        if ((month == "") || (year=="")){
+        if ((month == "") || (year == "")) {
 
             var newURL = window.location.origin + "/signup?month=" + month + "&year=" + year;
             window.location.href = newURL
