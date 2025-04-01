@@ -116,6 +116,15 @@ class Dates_Times():
                         time_array = time_array, 
                         delta = delta)
 
+        # dont add past times
+        if start < datetime.now() or new_start < datetime.now():
+            print(start)
+            return self._fill_time_dict(
+                start = new_start, 
+                end = end,
+                reserved_times=reserved_times,
+                time_array = time_array, 
+                delta = delta)
 
 
         # add on
@@ -144,12 +153,7 @@ class Dates_Times():
             return []
 
 
-        data_path = os.path.join(self.DATA_FOLDER,"data.json")
-
-        reserved_dict = []
-
-        with open(data_path, "r") as file:
-            reserved_dict = json.load(file)
+        reserved_dict = self._get_reserved()
 
 
         full_month = calendar.monthcalendar(year, month)
@@ -177,10 +181,8 @@ class Dates_Times():
                 for i in reserved_dict:
                     if i["year"] == year and i["month"] == month and i["day"] == day:
 
-
-
-                        reserved_start = datetime.strptime(i["startTime"], "%I:%M %p").replace(year=year, month=month)
-                        reserved_end = datetime.strptime(i["endTime"], "%I:%M %p").replace(year=year, month=month)
+                        reserved_start = datetime.strptime(i["startTime"], "%I:%M %p").replace(year=year, month=month, day=day)
+                        reserved_end = datetime.strptime(i["endTime"], "%I:%M %p").replace(year=year, month=month,day=day)
                         
                         reserved_times.append((reserved_start,reserved_end))
                         
@@ -198,8 +200,8 @@ class Dates_Times():
                     "availableTimes":  [] 
                 }
 
-                start_time = datetime.strptime(start, "%I:%M %p").replace(year=year, month=month)
-                end_time = datetime.strptime(end, "%I:%M %p").replace(year=year, month=month)
+                start_time = datetime.strptime(start, "%I:%M %p").replace(year=year, month=month,day=day)
+                end_time = datetime.strptime(end, "%I:%M %p").replace(year=year, month=month,day=day)
 
                 temp_dict["availableTimes"] = self._fill_time_dict(
                     start_time,  
@@ -265,14 +267,37 @@ class Dates_Times():
 
         return temp_dict
     
+    def _get_reserved(self):
+
+        data_path = os.path.join(self.DATA_FOLDER,"data.json")
+
+
+        with open(data_path, "r") as file:
+            reserved_dict = json.load(file)
+
+        filtered_dict = []
+
+        for i in reserved_dict:
+
+            reserved_end = datetime.strptime(i["endTime"], "%I:%M %p").replace(year=i["year"], month=i["month"],day=i["day"])
+
+            if reserved_end >= datetime.now():
+                filtered_dict.append(i)
+
+
+        
+        with open(data_path, "w") as file:
+            json.dump(filtered_dict, file, indent=4)
+
+        print(filtered_dict)
+
+        return filtered_dict 
+
     def reserve(self, day_dict):
 
         data_path = os.path.join(self.DATA_FOLDER,"data.json")
 
-        reserved_dict = []
-
-        with open(data_path, "r") as file:
-            reserved_dict = json.load(file)
+        reserved_dict = self._get_reserved()
 
         for i in reserved_dict:
             if i["title"]  == day_dict["title"]:
