@@ -85,9 +85,9 @@ class Dates_Times():
         return months[num]
 
 
-    # recursive func to go from start to end by delta
+    # recursive func to go from start to end by delta for a day, ie saturday may 3rd
     # note delta might change to be in config.json
-    def _fill_time_dict(self, start, end, time_array=None, delta=timedelta(minutes=30)):
+    def _fill_time_dict(self, start, end,reserved_times = [],time_array = None,  delta=timedelta(minutes=30)):
 
         # basecase 
         if time_array is None:
@@ -99,15 +99,38 @@ class Dates_Times():
         
         new_start = start + delta
 
+
+        # dont add reserved times
+        if reserved_times != []:
+
+            for reserved_start, reserved_end in reserved_times:
+
+                if start >= reserved_start and new_start <= reserved_end:
+
+
+
+                    return self._fill_time_dict(
+                        start = new_start, 
+                        end = end,
+                        reserved_times=reserved_times,
+                        time_array = time_array, 
+                        delta = delta)
+
+
+
         # add on
         time_array.append((start, new_start))
 
-        return self._fill_time_dict(start = new_start, end = end, time_array = time_array, delta = delta)
-
-
+        return self._fill_time_dict(
+            start = new_start, 
+            end = end,
+            reserved_times=reserved_times,
+            time_array = time_array,
+            delta = delta)
 
     # get all avalible times based on a month/year
     def get_available(self, month = datetime.now().month, requested_day = None, year = datetime.now().year):
+    
         now = datetime.now()
 
         current_date = datetime(now.year, now.month, 1)
@@ -119,6 +142,15 @@ class Dates_Times():
 
         if current_date > future_date:
             return []
+
+
+        data_path = os.path.join(self.DATA_FOLDER,"data.json")
+
+        reserved_dict = []
+
+        with open(data_path, "r") as file:
+            reserved_dict = json.load(file)
+
 
         full_month = calendar.monthcalendar(year, month)
 
@@ -137,6 +169,21 @@ class Dates_Times():
                     if day != requested_day:
                         continue
 
+                reserved_start = None
+                reserved_end = None
+
+                reserved_times = []
+
+                for i in reserved_dict:
+                    if i["year"] == year and i["month"] == month and i["day"] == day:
+
+
+
+                        reserved_start = datetime.strptime(i["startTime"], "%I:%M %p").replace(year=year, month=month)
+                        reserved_end = datetime.strptime(i["endTime"], "%I:%M %p").replace(year=year, month=month)
+                        
+                        reserved_times.append((reserved_start,reserved_end))
+                        
                 day_of_week = self.days[nums_of_week.index(day_num)]
                 
                 start = day_of_week["startTime"]
@@ -156,7 +203,8 @@ class Dates_Times():
 
                 temp_dict["availableTimes"] = self._fill_time_dict(
                     start_time,  
-                    end_time
+                    end_time,
+                    reserved_times=reserved_times
                 )
 
                 available.append(temp_dict)
@@ -171,16 +219,16 @@ class Dates_Times():
 
         array_num = 0
 
-        print(available["availableTimes"])
-
         for start_time, end_time in available["availableTimes"]:
-            
 
             temp_dict = {
                 "title": f"{available["weekday"]}, {self.num_to_months(available["month"])}, {available["day"]}{self.add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
                 "number": array_num,
                 "day": available["day"],
-                "endTime":end_time
+                "endTime":end_time,
+                "startTime":start_time,
+                "month": month,
+                "year": year
             }
 
             labels.append(temp_dict)
@@ -192,8 +240,6 @@ class Dates_Times():
     # get the dates and lables for buttons for main.html
     def get_available_labels_days(self,month = datetime.now().month, year = datetime.now().year):
         labels = []
-
-        print(month, year)
 
         available = self.get_available(month=month, year=year)
 
@@ -218,3 +264,30 @@ class Dates_Times():
         }
 
         return temp_dict
+    
+    def reserve(self, day_dict):
+
+        data_path = os.path.join(self.DATA_FOLDER,"data.json")
+
+        reserved_dict = []
+
+        with open(data_path, "r") as file:
+            reserved_dict = json.load(file)
+
+        for i in reserved_dict:
+            if i["title"]  == day_dict["title"]:
+                return False
+
+        reserved_dict.append(day_dict)
+
+        day_dict["startTime"] = day_dict["startTime"].strftime('%I:%M %p')
+        day_dict["endTime"] = day_dict["endTime"].strftime('%I:%M %p')
+        
+        # not needed here
+        day_dict.pop("number")
+
+
+        with open(data_path, "w") as file:
+            json.dump(reserved_dict, file, indent=4)
+
+        return True

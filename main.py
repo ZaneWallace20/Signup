@@ -26,8 +26,6 @@ def dates():
 
     month_data = times.get_days_in_month(month=month,year=year)
 
-    print(data)
-
     return render_template(
         'days.html', 
         buttons=data,
@@ -54,8 +52,6 @@ def days_times():
 
     data = times.get_available_labels(month=month,day=day,year=year)
 
-    print(data)
-
     return render_template('times.html', buttons=data, month = str(month), month_string = times.num_to_months(month), day = str(day) + times.add_suffix(day), year = str(year))
 
 
@@ -66,7 +62,6 @@ def button_click():
     day = request.form.get("day")
     year = request.form.get("year")
     number = request.form.get("number")
-
 
     if not month or not day or not year or not number:
         return jsonify({"message": "Error, please try again later D:"})
@@ -83,6 +78,8 @@ def button_click():
     data = times.get_available_labels(month=month,day=day,year=year)[number]
 
     date = data["title"]
+
+    times.reserve(data)
 
     return jsonify({"message": f"{date} reserved :D"})
 
