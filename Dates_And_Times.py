@@ -15,6 +15,17 @@ class Dates_Times():
 
     days = {}
 
+    # setup
+    def __init__(self):
+
+        config_path = os.path.join(self.DATA_FOLDER,"config.json")
+
+        with open(config_path, "r") as file:
+            self.config_dict = json.load(file)
+
+        self.days = self.config_dict["days"]
+        self.max_future = self.config_dict["maxFuture"]
+
 
     def _day_to_num(self, day):
         days = {
@@ -93,16 +104,6 @@ class Dates_Times():
 
         return self._fill_time_dict(start = new_start, end = end, time_array = time_array, delta = delta)
 
-    # setup
-    def __init__(self):
-
-        config_path = os.path.join(self.DATA_FOLDER,"config.json")
-
-        with open(config_path, "r") as file:
-            self.config_dict = json.load(file)
-
-        self.days = self.config_dict["days"]
-        self.max_future = self.config_dict["maxFuture"]
 
 
     # get all avalible times based on a month/year
@@ -178,7 +179,8 @@ class Dates_Times():
             temp_dict = {
                 "title": f"{available["weekday"]}, {self.num_to_months(available["month"])}, {available["day"]}{self.add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
                 "number": array_num,
-                "day": available["day"]
+                "day": available["day"],
+                "endTime":end_time
             }
 
             labels.append(temp_dict)
@@ -200,10 +202,19 @@ class Dates_Times():
 
                 "title":  f"{i["weekday"]}, {self.num_to_months(i["month"])}, {i["day"]}{self.add_suffix(i["day"])}",
                 "day": i["day"]
+                
             }
             labels.append(temp_dict)
 
         return labels
-    
-    def reserve_time(self, date):
-        return True
+
+    def get_days_in_month(self, month = datetime.now().month, year = datetime.now().year):
+
+        mont_stats = calendar.monthrange(year,month)
+
+        temp_dict = {
+            "total_days": mont_stats[1],
+            "offset": mont_stats[0]
+        }
+
+        return temp_dict

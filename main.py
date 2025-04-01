@@ -24,9 +24,19 @@ def dates():
 
     data = times.get_available_labels_days(month=month,year=year)
 
+    month_data = times.get_days_in_month(month=month,year=year)
+
     print(data)
 
-    return render_template('days.html', buttons=data,month = str(month), month_string = times.num_to_months(month), year = str(year))
+    return render_template(
+        'days.html', 
+        buttons=data,
+        month = str(month), 
+        month_string = times.num_to_months(month), 
+        year = str(year),
+        total_days = month_data["total_days"],
+        offset = month_data["offset"]
+        )
 
 @app.route('/signupDay')
 def days_times():
