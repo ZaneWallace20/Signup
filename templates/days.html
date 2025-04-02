@@ -16,7 +16,11 @@
 
             $('button').click(function() {
                 var day = $(this).data('day');
-                var newURL = window.location.origin + "/signupDay?month=" + month + "&day=" + day + "&year=" + year;
+
+                var params = new URLSearchParams(window.location.search);
+                var location = params.get("location")
+
+                var newURL = window.location.origin + "/signupDay?month=" + month + "&day=" + day + "&year=" + year + "&location=" + location;
                 window.location.href = newURL;
             });
         });

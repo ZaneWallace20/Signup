@@ -15,11 +15,14 @@ def dates():
 
     month = request.args.get('month', type=int)
     year = request.args.get('year', type=int) 
+    location = request.args.get('location')
 
     if not month:
         month = datetime.now().month
     if not year:
         year = datetime.now().year
+
+    times.adjust_config_dict(value=location)
 
     data = times.get_available_labels_days(month=month,year=year)
 
@@ -42,6 +45,10 @@ def days_times():
     year = request.args.get('year', type=int) 
     day = request.args.get('day', type=int) 
 
+    location = request.args.get('location')
+
+    times.adjust_config_dict(value=location)
+
     if not month:
         month = datetime.now().month
     if not year:
@@ -56,24 +63,23 @@ def days_times():
 @app.route('/submit', methods=['POST'])
 def reserve():
     
-    month = request.form.get("month")
-    day = request.form.get("day")
-    year = request.form.get("year")
+    month = request.form.get("month", type=int)
+    day = request.form.get("day", type=int)
+    year = request.form.get("year", type=int)
     title = request.form.get("title")
     name = request.form.get("name")
+    location = request.form.get('location')
 
-    if not month or not day or not year or not title or not name:
-        return jsonify({"message": "Error, please try again later D:"})
+
+    if not month or not day or not year or not title or not name or not location:
+        return jsonify({"message": "Error, please try again later D: (0)"})
     
-    try:
-        day = int(day)
-        month = int(month)
-        year = int(year)
 
-    except:
-        return jsonify({"message": "Error, please try again later D:"})
+    
+    times.adjust_config_dict(value=location)
 
     data = times.get_available_labels(month=month,day=day,year=year)
+    print(data)
 
     date = None
 
@@ -83,13 +89,13 @@ def reserve():
             break
     
     if not date:
-        return jsonify({"message": "Error, please try again later D:"})
+        return jsonify({"message": "Error, please try again later D: (1)"})
 
     if times.reserve(date, name=name):
 
         return jsonify({"message": f"{date["title"]} reserved :D"})
     else:
-        return jsonify({"message": "Error, please try again later D:"})
+        return jsonify({"message": "Error, please try again later D: (2)"})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port= 8080, debug=True)

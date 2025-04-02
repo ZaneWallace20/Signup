@@ -1,11 +1,30 @@
 {
-    "maxFuture" : 2,
-    "days":[
-        {
-            "day":"Saturday",
-            "startTime":"9:00 AM",
-            "endTime":"12:00 PM"
-        }
-    ]
+    "maxFuture": 2,
+    "soundBooth": {
+        "maxPeople": 1,
+        "days": [
+            {
+                "day": "Saturday",
+                "startTime": "11:00 AM",
+                "endTime": "12:00 PM"
+                
+            }
+        ]
+    },
 
+    "computerLab": {
+
+       
+            "maxPeople": 2,
+            "days": [
+                {
+                    "day": "Saturday",
+                    "startTime": "11:00 AM",
+                    "endTime": "12:00 PM"
+                    
+                }
+            ]
+       
+
+    }
 }

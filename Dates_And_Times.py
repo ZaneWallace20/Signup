@@ -11,6 +11,8 @@ class Dates_Times():
 
     DATA_FOLDER = "data"
     
+    main_config_dict = {}
+
     config_dict = {}
 
     days = {}
@@ -21,11 +23,10 @@ class Dates_Times():
         config_path = os.path.join(self.DATA_FOLDER,"config.json")
 
         with open(config_path, "r") as file:
-            self.config_dict = json.load(file)
+            self.main_config_dict = json.load(file)
 
-        self.days = self.config_dict["days"]
-        self.max_future = self.config_dict["maxFuture"]
-
+        self.max_future = self.main_config_dict["maxFuture"]
+        self.adjust_config_dict("soundBooth")
 
     def _day_to_num(self, day):
         days = {
@@ -40,6 +41,19 @@ class Dates_Times():
 
         return days[day]
     
+    def adjust_config_dict(self, value):
+
+        if value not in self.main_config_dict.keys() or value == "maxFuture":
+            self.config_dict = self.main_config_dict["soundBooth"]
+            self.config_dict["location"] = "soundBooth"
+
+        else:
+            self.config_dict = self.main_config_dict[value]
+            self.config_dict["location"] = value
+
+
+        self.days = self.config_dict["days"]
+
     # 1st, 2nd ...
     def add_suffix(self, num):
 
@@ -100,19 +114,23 @@ class Dates_Times():
         new_start = start + delta
 
 
+        num_people = 0
+
         # dont add reserved times
         if reserved_times != []:
 
             for reserved_start, reserved_end in reserved_times:
 
                 if start >= reserved_start and new_start <= reserved_end:
+                    num_people += 1
 
-                    return self._fill_time_dict(
-                        start = new_start, 
-                        end = end,
-                        reserved_times=reserved_times,
-                        time_array = time_array, 
-                        delta = delta)
+                    if num_people >= self.config_dict["maxPeople"]:
+                        return self._fill_time_dict(
+                            start = new_start, 
+                            end = end,
+                            reserved_times=reserved_times,
+                            time_array = time_array, 
+                            delta = delta)
 
         # dont add past times
         if start < datetime.now() or new_start < datetime.now():
@@ -202,6 +220,7 @@ class Dates_Times():
 
                 start_time = datetime.strptime(start, "%I:%M %p").replace(year=year, month=month,day=day)
                 end_time = datetime.strptime(end, "%I:%M %p").replace(year=year, month=month,day=day)
+      
 
                 temp_dict["availableTimes"] = self._fill_time_dict(
                     start_time,  
@@ -219,7 +238,6 @@ class Dates_Times():
 
         available = self.get_available(month=month, requested_day=day, year=year)[0]
 
-        array_num = 0
 
         for start_time, end_time in available["availableTimes"]:
 
@@ -234,8 +252,7 @@ class Dates_Times():
 
             labels.append(temp_dict)
 
-            array_num += 1
-
+           
         return labels
     
     # get the dates and lables for buttons for days.html
@@ -273,8 +290,16 @@ class Dates_Times():
         data_path = os.path.join(self.DATA_FOLDER,"data.json")
 
 
-        with open(data_path, "r") as file:
-            reserved_dict = json.load(file)
+        full_dict = {}
+
+        with open(data_path,"r") as file:
+            full_dict = json.load(file)
+
+        reserved_dict = []
+        if self.config_dict["location"] in full_dict.keys():
+            reserved_dict = full_dict[self.config_dict["location"]]
+     
+        print(self.config_dict["location"])
 
         filtered_dict = []
 
@@ -286,8 +311,15 @@ class Dates_Times():
             if reserved_end >= datetime.now():
                 filtered_dict.append(i)
 
+
+        print(filtered_dict)
+
+        full_dict[self.config_dict["location"]] = filtered_dict
+
         with open(data_path, "w") as file:
-            json.dump(filtered_dict, file, indent=4)
+            json.dump(full_dict, file, indent=4)
+
+        
 
         return filtered_dict 
 
@@ -296,11 +328,16 @@ class Dates_Times():
         data_path = os.path.join(self.DATA_FOLDER,"data.json")
 
         reserved_dict = self._get_reserved()
+        
+        num_people = 0
 
         for i in reserved_dict:
 
             if i["title"] == day_dict["title"]:
-                return False
+                num_people += 1
+                
+                if num_people >= self.config_dict["maxPeople"]:
+                    return False
 
 
         day_dict["startTime"] = day_dict["startTime"].strftime('%I:%M %p')
@@ -308,13 +345,15 @@ class Dates_Times():
 
         day_dict["name"] = name
 
+
         reserved_dict.append(day_dict)
 
+        with open(data_path,"r") as file:
+            full_dict = json.load(file)
 
+            full_dict[self.config_dict["location"]] = reserved_dict
 
-
-
-        with open(data_path, "w") as file:
-            json.dump(reserved_dict, file, indent=4)
+            with open(data_path, "w") as file:
+                json.dump(full_dict, file, indent=4)
 
         return True

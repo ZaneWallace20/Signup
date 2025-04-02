@@ -13,16 +13,22 @@
             var month = $('body').data('month');
 
             $('button').click(function () {
-                var day = $(this).data('day');
-                var number = $(this).data('number');
-                var title = $(this).text();
+
 
                 let nameInput = document.getElementById("name").value.trim();
                 if (nameInput === "") {
                     alert("Name cannot be blank.");
                     return false;
                 }
-                $.post('/submit', { month: month, day: day, year: year, title: title, name:nameInput }, function (data) {
+
+                var day = $(this).data('day');
+                var number = $(this).data('number');
+                var title = $(this).text();
+
+                var params = new URLSearchParams(window.location.search);
+                var location = params.get("location")
+
+                $.post('/submit', { month: month, day: day, year: year, title: title, name:nameInput, location: location}, function (data) {
                     alert(data.message);
                     window.location.href = window.location.origin;
                 });
