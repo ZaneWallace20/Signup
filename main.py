@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 times = Dates_Times()
 
-
 @app.route('/')
 def home():
     return render_template("home.html")
@@ -54,20 +53,19 @@ def days_times():
 
     return render_template('times.html', buttons=data, month = str(month), month_string = times.num_to_months(month), day = str(day) + times.add_suffix(day), year = str(year))
 
-
 @app.route('/submit', methods=['POST'])
-def button_click():
+def reserve():
     
     month = request.form.get("month")
     day = request.form.get("day")
     year = request.form.get("year")
-    number = request.form.get("number")
+    title = request.form.get("title")
+    name = request.form.get("name")
 
-    if not month or not day or not year or not number:
+    if not month or not day or not year or not title or not name:
         return jsonify({"message": "Error, please try again later D:"})
     
     try:
-        number = int(number)
         day = int(day)
         month = int(month)
         year = int(year)
@@ -75,13 +73,23 @@ def button_click():
     except:
         return jsonify({"message": "Error, please try again later D:"})
 
-    data = times.get_available_labels(month=month,day=day,year=year)[number]
+    data = times.get_available_labels(month=month,day=day,year=year)
 
-    date = data["title"]
+    date = None
 
-    times.reserve(data)
+    for i in data:
+        if title == i["title"]:
+            date = i
+            break
+    
+    if not date:
+        return jsonify({"message": "Error, please try again later D:"})
 
-    return jsonify({"message": f"{date} reserved :D"})
+    if times.reserve(date, name=name):
+
+        return jsonify({"message": f"{date["title"]} reserved :D"})
+    else:
+        return jsonify({"message": "Error, please try again later D:"})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port= 8080, debug=True)

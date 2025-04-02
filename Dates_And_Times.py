@@ -94,7 +94,7 @@ class Dates_Times():
             time_array = []
         
         # basecase 
-        if start + delta >= end:
+        if start + delta > end:
             return time_array
         
         new_start = start + delta
@@ -107,8 +107,6 @@ class Dates_Times():
 
                 if start >= reserved_start and new_start <= reserved_end:
 
-
-
                     return self._fill_time_dict(
                         start = new_start, 
                         end = end,
@@ -118,7 +116,6 @@ class Dates_Times():
 
         # dont add past times
         if start < datetime.now() or new_start < datetime.now():
-            print(start)
             return self._fill_time_dict(
                 start = new_start, 
                 end = end,
@@ -163,8 +160,11 @@ class Dates_Times():
         available = []
 
         for week in full_month:
-            for day_num, day in enumerate(week):
 
+            # day_num 0-6
+            # day 0-len(month)
+            for day_num, day in enumerate(week):
+                
                 if day_num not in nums_of_week:
                     continue
                 if day == 0:
@@ -213,7 +213,7 @@ class Dates_Times():
     
         return available
 
-    # get the dates and lables for buttons for main.html
+    # get the dates and lables for buttons for days.html
     def get_available_labels(self,month = datetime.now().month, day = datetime.now().day, year = datetime.now().year):
         labels = []
 
@@ -225,7 +225,6 @@ class Dates_Times():
 
             temp_dict = {
                 "title": f"{available["weekday"]}, {self.num_to_months(available["month"])}, {available["day"]}{self.add_suffix(available["day"])}: {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}",
-                "number": array_num,
                 "day": available["day"],
                 "endTime":end_time,
                 "startTime":start_time,
@@ -239,7 +238,7 @@ class Dates_Times():
 
         return labels
     
-    # get the dates and lables for buttons for main.html
+    # get the dates and lables for buttons for days.html
     def get_available_labels_days(self,month = datetime.now().month, year = datetime.now().year):
         labels = []
 
@@ -256,6 +255,8 @@ class Dates_Times():
 
         return labels
 
+
+    # used for when flask makes cal
     def get_days_in_month(self, month = datetime.now().month, year = datetime.now().year):
 
         mont_stats = calendar.monthrange(year,month)
@@ -277,6 +278,7 @@ class Dates_Times():
 
         filtered_dict = []
 
+        # filter out old times
         for i in reserved_dict:
 
             reserved_end = datetime.strptime(i["endTime"], "%I:%M %p").replace(year=i["year"], month=i["month"],day=i["day"])
@@ -284,32 +286,32 @@ class Dates_Times():
             if reserved_end >= datetime.now():
                 filtered_dict.append(i)
 
-
-        
         with open(data_path, "w") as file:
             json.dump(filtered_dict, file, indent=4)
 
-        print(filtered_dict)
-
         return filtered_dict 
 
-    def reserve(self, day_dict):
+    def reserve(self, day_dict, name):
 
         data_path = os.path.join(self.DATA_FOLDER,"data.json")
 
         reserved_dict = self._get_reserved()
 
         for i in reserved_dict:
-            if i["title"]  == day_dict["title"]:
+
+            if i["title"] == day_dict["title"]:
                 return False
 
-        reserved_dict.append(day_dict)
 
         day_dict["startTime"] = day_dict["startTime"].strftime('%I:%M %p')
         day_dict["endTime"] = day_dict["endTime"].strftime('%I:%M %p')
-        
-        # not needed here
-        day_dict.pop("number")
+
+        day_dict["name"] = name
+
+        reserved_dict.append(day_dict)
+
+
+
 
 
         with open(data_path, "w") as file:

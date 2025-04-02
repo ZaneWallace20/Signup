@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/times.css') }}">
+  
     <script>
-        $(document).ready(function() {
-            var year = $('body').data('year'); 
-            var month = $('body').data('month'); 
+        $(document).ready(function () {
+            var year = $('body').data('year');
+            var month = $('body').data('month');
 
-            $('button').click(function() {
+            $('button').click(function () {
                 var day = $(this).data('day');
                 var number = $(this).data('number');
+                var title = $(this).text();
 
-                console.log(month)
-                $.post('/submit', {month: month, day:day, year: year, number:number}, function(data) {
+                let nameInput = document.getElementById("name").value.trim();
+                if (nameInput === "") {
+                    alert("Name cannot be blank.");
+                    return false;
+                }
+                $.post('/submit', { month: month, day: day, year: year, title: title, name:nameInput }, function (data) {
                     alert(data.message);
                     window.location.href = window.location.origin;
                 });
@@ -29,11 +36,15 @@
 
     <h1>Here are the times available for:</h1>
     <h1>{{ month_string }}, {{ day }}, {{ year }} </h1>
-
+    <label for="name">Please enter your full name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <br>
     <div>
         {% for button in buttons %}
-            <button data-number="{{ button.number }}" data-day="{{ button.day }}">{{ button.title }}</button><br><br>
+        <button data-day="{{ button.day }}">{{ button.title }}</button><br><br>
         {% endfor %}
     </div>
 </body>
+
 </html>
